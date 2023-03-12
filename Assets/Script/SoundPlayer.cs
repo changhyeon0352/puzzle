@@ -14,6 +14,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
 
     public void PlayPieceSound()
     {
-        audioSource.Play();
+        if(GameManager.Instance.isSoundOn)
+            audioSource.Play();
     }
 }

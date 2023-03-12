@@ -10,9 +10,6 @@ public class PuzzleShapeData : ScriptableObject
     Sprite sprite;
     public Sprite Sprite { get { return sprite; } }
     [SerializeField]
-    int[] shapeInfoCw;
-    public int[] ShapeInfoCw { get { return shapeInfoCw; } }
-    [SerializeField]
     string shapeInfoStr;
     public string ShapeInfoStr { get { return shapeInfoStr; } }
 

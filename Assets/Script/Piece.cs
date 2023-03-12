@@ -33,6 +33,7 @@ public class Piece : MonoBehaviour,IBeginDragHandler, IEndDragHandler,IDragHandl
     private ScrollRect scrollRect;
     
     private RectTransform rectTr;
+    public Vector2Int GridPos { get { return gridPos; } }
     private void Awake()
     {
         canvasgroup = GetComponent<CanvasGroup>();
@@ -45,22 +46,16 @@ public class Piece : MonoBehaviour,IBeginDragHandler, IEndDragHandler,IDragHandl
         GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
         InitPieceSize();
     }
-
-
     public void ChansePieceSize(float scale)
     {
         maskTr.GetComponent<RectTransform>().localScale = new Vector3(scale, scale, 1);
         
-    }
+    }//피스박스에서 꺼낼거나 넣을 때 크기를 바꿔줌
     public void InitPieceSize()
     {
         float scale = 10f / (float)GameManager.Instance.boardSize;
         maskTr.GetComponent<RectTransform>().sizeDelta = new Vector2(GridMaker.pieceSize * scale, GridMaker.pieceSize * scale);
-    }
-    public Vector2Int GridPos { get { return gridPos; } }
-    
-    
-
+    }//퍼즐사이즈에 따라 피스 사이즈를 초기화 해줌
     public void InitPiece(int[] shapeInfo,Vector2Int gridpos)
     {
         gridPos = gridpos;
@@ -71,7 +66,8 @@ public class Piece : MonoBehaviour,IBeginDragHandler, IEndDragHandler,IDragHandl
         {
             if(shapeData.ShapeInfoStr.Contains(str))
             {
-                spinToCw = shapeData.ShapeInfoStr.IndexOf(str);//퍼즐 기본 형태에서 회전정도
+                //원래 피스모양에서 회전되는 정도 
+                spinToCw = shapeData.ShapeInfoStr.IndexOf(str);
                 img.sprite = shapeData.Sprite;
                 MakePainting(-spinToCw * 90);
                 break;
@@ -84,12 +80,12 @@ public class Piece : MonoBehaviour,IBeginDragHandler, IEndDragHandler,IDragHandl
         {
             GameManager.Instance.StartPuzzleGame();
         }
-    }
+    }//그리드에서 피스생성시 사용
     private void RandomRotate()
     {
         extraSpinToCw = UnityEngine.Random.Range(0, 4);
         transform.Rotate(0, 0, extraSpinToCw * -90);
-    }
+    }// 처음 피스박스에 넣을 떄 실행
     public void MakePainting(int rotate)
     {
         int boardSize=(GameManager.Instance.boardSize);
@@ -117,8 +113,7 @@ public class Piece : MonoBehaviour,IBeginDragHandler, IEndDragHandler,IDragHandl
         image.rectTransform.anchoredPosition = new Vector2(x,y );
         image.rectTransform.Rotate(0,0,rotate);
         image.sprite = SpriteStorage.Instance.Sprites[GameManager.Instance.PuzzleId];
-    }
-
+    }//피스모양에 마스킹되는 그림의 위치를 조정함
     public void OnBeginDrag(PointerEventData eventData)
     {
         if(isFixed)
@@ -190,7 +185,7 @@ public class Piece : MonoBehaviour,IBeginDragHandler, IEndDragHandler,IDragHandl
         {
             FixOrCombineOrPutInBox();
         }
-    }
+    } //FixOrCombineOrPutInBox()실행
     //그리드에 고정 | 주변4방향을보고 피스들끼리 결합 | 피스박스에 넣기 
     private bool FixOrCombineOrPutInBox()
     {
@@ -208,7 +203,7 @@ public class Piece : MonoBehaviour,IBeginDragHandler, IEndDragHandler,IDragHandl
             {
                 isIngrid = true;
                 Grid grid = result.gameObject.GetComponent<Grid>();
-                Piece combinablePiece = GetCombinableCwDir();
+                Piece combinablePiece = GetCombinablePiece();
                 if (grid.GridPos == gridPos && extraSpinToCw == 0&& (gridPos.x % (GameManager.Instance.boardSize - 1) == 0 || 
                     gridPos.y % (GameManager.Instance.boardSize - 1) == 0|| combinablePiece != this && combinablePiece.isFixed))
                 {
@@ -224,8 +219,7 @@ public class Piece : MonoBehaviour,IBeginDragHandler, IEndDragHandler,IDragHandl
         if (!isIngrid && !transform.parent.CompareTag("Combine"))
             FindObjectOfType<PiecesBox>().PutItInBox(this);
         return false;
-    }
-
+    }//그리드에 고정되거나 다른피스와 결합할수 있으면 함
     private void CombinePiece(Piece combinablePiece)
     {
         if (combinablePiece != this && !combinablePiece.isFixed)
@@ -260,8 +254,7 @@ public class Piece : MonoBehaviour,IBeginDragHandler, IEndDragHandler,IDragHandl
                 combinablePiece.FixOrCombineOrPutInBox();
             }
         }
-    }
-
+    }// 고정되지 않은 인접 피스와 결합
     public void FixPieceInGrid(Grid grid)
     {
         SoundPlayer.Instance.PlayPieceSound();
@@ -292,23 +285,19 @@ public class Piece : MonoBehaviour,IBeginDragHandler, IEndDragHandler,IDragHandl
             Debug.Log("끝");
             CompletePuzzle();
         }
-    }
-
+    }//그리드에 피스 고정
     public void CompletePuzzle()
     {
         FindObjectOfType<rewardUI>().RewardUION();
-    }
-
-    private Piece GetCombinableCwDir()
+    }//퍼즐이 끝났을때 실행됨 보상창On
+    private Piece GetCombinablePiece()
     {
         Piece result = this;
         m_PointerEventData = new PointerEventData(GameManager.Instance.EventSystem);
-        
         for(int i=0;i<4;i++)
         {
-            m_PointerEventData.position= (Vector2)rectTr.position +(Vector2) GridMaker.CwToVector(i+extraSpinToCw)*1000f/ (float)GameManager.Instance.boardSize*0.5f;
-            //Ray ray = Camera.main.ScreenPointToRay(m_PointerEventData.position);
-            //Debug.DrawRay(m_PointerEventData.position, ray.direction * 1000f, Color.green, 10f);
+            m_PointerEventData.position= (Vector2)rectTr.position +
+                (Vector2) GridMaker.CwToVector(i+extraSpinToCw)*1000f/(float)GameManager.Instance.boardSize*0.5f;
             List<RaycastResult> hits = new List<RaycastResult>();
             GameManager.Instance.Raycaster.Raycast(m_PointerEventData, hits);
             foreach (RaycastResult hit in hits)
@@ -318,21 +307,17 @@ public class Piece : MonoBehaviour,IBeginDragHandler, IEndDragHandler,IDragHandl
                     Piece piece = hit.gameObject.transform.parent.GetComponent<Piece>();
                     if (piece.extraSpinToCw == extraSpinToCw && piece.GridPos - gridPos == GridMaker.CwToVector(i))
                     {
-                        if (transform.parent.CompareTag("Combine") && piece.transform.parent == transform.parent)//같은 Combine자식이면
+                        if (transform.parent.CompareTag("Combine") && piece.transform.parent == transform.parent)
                             break;
                         result = piece;
                         if (result.isFixed)
                             return result;
                     }
-                    
                 }
             }
         }
         return result;
-    }
-
-  
-
+    }//인접한 부분에 결합가능한 피스를 반환
     public void OnPointerClick(PointerEventData eventData)
     {
         if(isFixed)
@@ -375,8 +360,7 @@ public class Piece : MonoBehaviour,IBeginDragHandler, IEndDragHandler,IDragHandl
             extraSpinToCw %= 4;
             FixOrCombineOrPutInBox();
         }
-    }
-
+    }//회전하며 FixOrCombineOrPutInBox()실행
     public void OnPointerUp(PointerEventData eventData)
     {
         canvasgroup.blocksRaycasts = true;

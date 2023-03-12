@@ -62,8 +62,8 @@ public class DataManager : Singleton<DataManager>
     override protected void Awake()
     {
         base.Awake();
-        //dataPath = Path.Combine(Application.streamingAssetsPath, "Data");
-        dataPath = Application.persistentDataPath;
+        dataPath = Path.Combine(Application.streamingAssetsPath, "Data");
+        //dataPath = Application.persistentDataPath;
         //LoadPuzzleDataFromJson();
         LoadFromJson(DataType.puzzleData);
        

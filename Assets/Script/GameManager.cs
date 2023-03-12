@@ -10,6 +10,7 @@ public class GameManager : Singleton<GameManager>
     GraphicRaycaster m_Raycaster;
     [SerializeField]
     private int puzzleId;
+    public bool isSoundOn=true;
     public int PuzzleId { get { return puzzleId; } }
     public int ongoingStep=0;
     public GraphicRaycaster Raycaster { get 
@@ -20,12 +21,7 @@ public class GameManager : Singleton<GameManager>
     EventSystem m_EventSystem;
     public EventSystem EventSystem { get { return m_EventSystem; } }    
 
-    [SerializeField]
-    Transform puzzleBoardTr;
-    [SerializeField]
-    GridMaker gridMaker;
-    //public GridMaker GridMaker { get => gridMaker; }
-    //public Transform PuzzleBoardTr { get { return puzzleBoardTr; } }
+    
     public int boardSize;
     protected override void Awake()
     {

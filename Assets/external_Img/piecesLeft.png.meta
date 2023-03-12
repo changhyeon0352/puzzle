@@ -125,7 +125,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: pieces_121_up
+      name: pieces_2123
       rect:
         serializedVersion: 2
         x: 215
@@ -243,11 +243,11 @@ TextureImporter:
       piecesLeft_7: -1153448357
       piecesLeft_17: 820198620
       pieces_121_left: 717309073
-      pieces_121_up: -1215367254
       piecesLeft_15: 1267221922
       pieces_220: 2070726076
       piecesLeft_11: 1315015700
       pieces_130: -107088751
+      pieces_2123: -1215367254
       piecesLeft_9: 2006962470
       piecesLeft_14: 558505045
       pieces_040: 753870880

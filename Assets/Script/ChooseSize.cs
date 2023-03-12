@@ -14,7 +14,7 @@ public class ChooseSize : MonoBehaviour
     void Awake()
     {
         //scrollsnap.OnSelectionChangeStartEvent.AddListener(OnPageChangeStart);
-        //scrollsnap.OnSelectionPageChangedEvent.AddListener(OnPageChanged);
+        scrollsnap.OnSelectionPageChangedEvent.AddListener(OnPageChangeEnd);
         scrollsnap.OnSelectionChangeEndEvent.AddListener(OnPageChangeEnd);
         
         piecesNums = new PiecesNum[transform.childCount];
@@ -31,7 +31,6 @@ public class ChooseSize : MonoBehaviour
     }
     void OnPageChanged(int index)
     {
-        Debug.Log("CHanged");
         for (int i = 0; i < piecesNums.Length; i++)
         {
             if (i == index)
@@ -44,8 +43,6 @@ public class ChooseSize : MonoBehaviour
 
     void OnPageChangeEnd(int index)
     {
-        Debug.Log("End");
-        
         
         for (int i = 0; i < piecesNums.Length; i++)
         {
@@ -60,6 +57,5 @@ public class ChooseSize : MonoBehaviour
                 piecesNums[i].image.color = colors[0];
             
         }
-        
     }
 }
